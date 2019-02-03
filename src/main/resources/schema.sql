@@ -1,0 +1,3 @@
+CREATE TABLE accounts (
+  id     BIGINT PRIMARY KEY,
+  amount DECIMAL(20, 2) NOT NULL);
