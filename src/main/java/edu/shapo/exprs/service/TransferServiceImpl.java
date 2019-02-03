@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 public class TransferServiceImpl implements TransferService {
 
@@ -22,7 +23,7 @@ public class TransferServiceImpl implements TransferService {
     private AccountDao accountDao;
 
     @Override
-    public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException {
+    public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException, Exception {
         log.info("Received transfer request from: " + srcId + " to: " + dstId + " with amount: " + amount + " initiated by: " +initiator);
 
 
@@ -40,20 +41,25 @@ public class TransferServiceImpl implements TransferService {
             throw new MoneyTransferException(ErrorCode.ERROR_003.name());
         }
 
-        processTransferring(srcOpt.get(), dstOpt.get(), amount);
+        //processTransferring(srcOpt.get(), dstOpt.get(), amount);
+        processing(srcOpt.get(), dstOpt.get(), amount);
 
 
         if (accounts != null) {
-            accounts.forEach(a -> {
-                log.info(a.toString());
-            });
+//            accounts.forEach(a -> {
+//                log.info(a.toString());
+//            });
+            BigDecimal sum = accounts.stream()
+                    .map(Account::getCurrentAmout).reduce(BigDecimal.ZERO ,BigDecimal::add);
+            log.info("Total sum: " + sum);
         }
+
 
         return new TransferStatus(Constant.TRANSFER_SUCCESSFUL, "transfer successful", null);
     }
 
     private void processTransferring(Account srcAcc, Account dstAcc, BigDecimal amount) throws MoneyTransferException {
-
+        log.info("In separate thread. From " + srcAcc.getId() + " to: " + dstAcc.getId() + " amount: " + amount);
         Account former, latter;
         if (srcAcc.compareTo(dstAcc) < 0) {
             former = srcAcc;
@@ -72,6 +78,15 @@ public class TransferServiceImpl implements TransferService {
                 dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
             }
         }
+
+    }
+
+    private void processing(Account srcAcc, Account dstAcc, BigDecimal amount) throws Exception {
+        Callable transfer = (Callable<Integer>) () -> {
+            processTransferring(srcAcc, dstAcc, amount);
+            return 0;
+        };
+        transfer.call();
 
     }
 

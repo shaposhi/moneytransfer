@@ -6,14 +6,21 @@ import edu.shapo.exprs.exception.MoneyTransferException
 import edu.shapo.exprs.model.Constant
 import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.model.TransferStatus
+import spock.lang.Shared
 import spock.lang.Specification
 
 class TransferServiceSpec extends Specification {
 
     TransferServiceImpl transferService = new TransferServiceImpl()
 
+    @Shared
+    AccountDao accountDao
+
+    def setupSpec() {
+        accountDao = new AccountDaoImpl()
+    }
+
     def setup() {
-        AccountDao accountDao = new AccountDaoImpl()
         transferService.accountDao = accountDao
     }
 

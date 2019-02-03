@@ -6,5 +6,5 @@ import edu.shapo.exprs.model.TransferStatus;
 import java.math.BigDecimal;
 
 public interface TransferService {
-    TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException;
+    TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException, Exception;
 }

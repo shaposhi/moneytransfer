@@ -34,7 +34,7 @@ class RequestSyntaxValidatorSpec extends Specification {
     def "check for correct dest ID"(){
 
         given:
-        TransferRequestTO transferRequestTO = new  TransferRequestTO(sourceAccountId: 4L, targetAccountId: 7L, transferAmount: new BigDecimal(100), initiator: "John")
+        TransferRequestTO transferRequestTO = new  TransferRequestTO(sourceAccountId: 4L, targetAccountId: -74L, transferAmount: new BigDecimal(100), initiator: "John")
 
         Request inputRequst = Mock(Request.class)
         inputRequst.body() >> new Gson().toJson(transferRequestTO)
@@ -64,6 +64,24 @@ class RequestSyntaxValidatorSpec extends Specification {
         result
         !result.valid
         result.errorMessage.contains(ErrorCode.ERROR_012.description)
+
+    }
+
+    def "check for correct amount 2 "(){
+
+        given:
+        TransferRequestTO transferRequestTO = new  TransferRequestTO(sourceAccountId: 4L, targetAccountId: 5L, transferAmount: new BigDecimal("0.10"), initiator: "John")
+
+        Request inputRequst = Mock(Request.class)
+        inputRequst.body() >> new Gson().toJson(transferRequestTO)
+
+        when:
+        SyntaxValidationResult result = validator.validate(inputRequst)
+
+        then:
+        result
+        result.valid
+
 
     }
 

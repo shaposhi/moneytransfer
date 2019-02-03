@@ -1,11 +1,13 @@
 package edu.shapo.exprs.api
 
-import com.despegar.http.client.GetMethod
 import com.despegar.http.client.HttpResponse
+import com.despegar.http.client.PostMethod
 import com.despegar.sparkjava.test.SparkServer
+import org.junit.Ignore
 import spark.servlet.SparkApplication
 import spock.lang.Specification
 
+@Ignore
 class TransferApiSpec extends Specification {
 
     static class TestTransferApiSparkApplication implements SparkApplication {
@@ -15,18 +17,20 @@ class TransferApiSpec extends Specification {
         }
     }
 
+    @org.junit.ClassRule
     public static SparkServer<TestTransferApiSparkApplication> testServer
 
-    def setup() {
-        testServer = new SparkServer<>(TestTransferApiSparkApplication.class, 8090)
+    def setupSpec() {
+        testServer = new SparkServer<>(TestTransferApiSparkApplication.class, 8080)
     }
 
     def "check responce on post request" () {
 
         given:
-        GetMethod request = testServer.get("/", false)
+        PostMethod request = testServer.post("/bank/api/transfer/make", " ",false)
 
         when:
+        Thread.sleep(2000)
         HttpResponse httpResponse = testServer.execute(request)
 
         then:

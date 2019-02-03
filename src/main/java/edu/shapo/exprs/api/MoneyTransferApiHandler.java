@@ -51,6 +51,8 @@ public class MoneyTransferApiHandler {
 
             return new Gson().toJson(new TransferResponseTO(Constant.TRANSFER_FAIL,
                     "Error: " + errorCode.name() + " " + errorCode.getDescription()));
+        } catch (Exception e) {
+            return new Gson().toJson(new TransferResponseTO(Constant.TRANSFER_FAIL, e.getMessage()));
         }
 
 

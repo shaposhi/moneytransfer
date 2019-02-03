@@ -19,9 +19,10 @@ public class MoneyTransferApi {
 
     private void setupRoutes() {
         log.info("Setting routes");
+        log.info(moneyTransferApiHandler);
         port(8080);
         path("/bank/api", () -> {
-            before("/*", (req, res) -> log.info("Received bank api call " + req + " " + res));
+            before("/*", (req, res) -> log.info("Received bank api call " + req.body() + " " + res));
 
             path("/transfer", () -> {
                 post("/make", ((request, response) -> moneyTransferApiHandler.handleTransferRequest(request, response)));

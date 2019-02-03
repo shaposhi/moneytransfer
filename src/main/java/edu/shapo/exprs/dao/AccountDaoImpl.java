@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AccountDaoImpl implements AccountDao {
 
@@ -23,7 +24,6 @@ public class AccountDaoImpl implements AccountDao {
     private Dao<Account, String> accountDao = null;
 
 
-    //TODO use thread-safe List here
     private List<Account> bankAccounts = Collections.EMPTY_LIST;
 
     public AccountDaoImpl() {
@@ -32,20 +32,25 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     private void initConnection() {
-        ConnectionSource connectionSource = null;
-        try {
-            connectionSource = new JdbcConnectionSource(URL_WITH_INIT_SCRIPTS, "sa", "");
-            accountDao = DaoManager.createDao(connectionSource, Account.class);
-        } catch (SQLException e) {
-            log.error("Error during init connection to DB", e);
+        if (accountDao == null) {
+            ConnectionSource connectionSource = null;
+            try {
+                connectionSource = new JdbcConnectionSource(URL_WITH_INIT_SCRIPTS, "sa", "");
+                accountDao = DaoManager.createDao(connectionSource, Account.class);
+            } catch (SQLException e) {
+                log.error("Error during init connection to DB", e);
+            }
         }
+
     }
 
     private void loadAccounts(){
-        try {
-            bankAccounts = accountDao.queryForAll();
-        } catch (SQLException e) {
-            log.error("Error loading accounts", e);
+        if (CollectionUtils.isEmpty(bankAccounts)) {
+            try {
+                bankAccounts = new CopyOnWriteArrayList<>(accountDao.queryForAll());
+            } catch (SQLException e) {
+                log.error("Error loading accounts", e);
+            }
         }
     }
 

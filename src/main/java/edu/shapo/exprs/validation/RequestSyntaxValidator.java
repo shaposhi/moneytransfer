@@ -10,6 +10,7 @@ import org.h2.util.StringUtils;
 import spark.Request;
 import spark.utils.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -22,6 +23,12 @@ public class RequestSyntaxValidator {
         List<ErrorCode> syntaxErrors;
         SyntaxValidationResult result = new SyntaxValidationResult();
         result.setValid(true);
+
+        if (request.body() == null) {
+            result.setValid(false);
+            result.setErrorMessage(ErrorCode.ERROR_100.getDescription());
+            return result;
+        }
 
         TransferRequestTO requestTO;
         try {
@@ -59,7 +66,7 @@ public class RequestSyntaxValidator {
             if (requestTO.getTargetAccountId() <= 0L) {
                 results.add(ErrorCode.ERROR_011);
             }
-            if (requestTO.getTransferAmount() == null || requestTO.getTransferAmount().longValue() <= 0L) {
+            if (requestTO.getTransferAmount() == null || (requestTO.getTransferAmount().compareTo(new BigDecimal(0.0)) < 0)) {
                 results.add(ErrorCode.ERROR_012);
             }
             if (StringUtils.isNullOrEmpty(requestTO.getInitiator())) {
@@ -67,6 +74,9 @@ public class RequestSyntaxValidator {
             }
             if (requestTO.getTransferAmount() != null && requestTO.getTransferAmount().scale() > 2 ) {
                 results.add(ErrorCode.ERROR_014);
+            }
+            if (requestTO.getSourceAccountId().equals(requestTO.getTargetAccountId())) {
+                results.add(ErrorCode.ERROR_001);
             }
 
         } else {
