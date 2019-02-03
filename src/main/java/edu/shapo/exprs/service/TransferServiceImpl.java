@@ -75,4 +75,7 @@ public class TransferServiceImpl implements TransferService {
 
     }
 
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
 }

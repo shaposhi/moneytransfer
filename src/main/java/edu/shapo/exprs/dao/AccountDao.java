@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AccountDao {
     List<Account> getAllAccounts();
+    Account findById(Long id);
 }
