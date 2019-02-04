@@ -11,13 +11,20 @@ public class ApiRealTest {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 
-        for (int i=0; i<1000; i++) {
+        for (int i=0; i<100; i++) {
             System.out.println("Thread " + i + " started");
-            SingleCallThread thread = new SingleCallThread();
+            SingleTransferCallThread thread = new SingleTransferCallThread();
             executorService.submit(thread);
         }
 
         executorService.shutdown();
+
+        SingleStatisticCallThread sasct1 =  new SingleStatisticCallThread("http://localhost:8080/bank/api/stat/allaccstatus");
+        sasct1.start();
+
+        SingleStatisticCallThread sasct2 =  new SingleStatisticCallThread("http://localhost:8080/bank/api/stat/transactioncount");
+        sasct2.start();
+
 
     }
 

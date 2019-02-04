@@ -20,7 +20,7 @@ class MoneyTransferApiHanplerSpec extends Specification {
     TransferService transferService = Mock(TransferService.class)
     RequestSyntaxValidator validator = Mock(RequestSyntaxValidator.class)
 
-    MoneyTransferApiHandler handler = new MoneyTransferApiHandler()
+    MoneyTransferController handler = new MoneyTransferController()
 
     def setup() {
         handler.transferService = transferService

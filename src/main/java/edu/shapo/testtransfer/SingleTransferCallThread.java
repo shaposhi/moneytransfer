@@ -7,12 +7,12 @@ import com.sun.jersey.api.client.WebResource;
 import javax.ws.rs.core.MediaType;
 import java.util.Random;
 
-public class SingleCallThread extends Thread {
+public class SingleTransferCallThread extends Thread {
 
     Client client = null;
     WebResource resource = null;
 
-    public SingleCallThread() {
+    public SingleTransferCallThread() {
 
         client = Client.create();
         resource = client.resource("http://localhost:8080/bank/api/transfer/make");

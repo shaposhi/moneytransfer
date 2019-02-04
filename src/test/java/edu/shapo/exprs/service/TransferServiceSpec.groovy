@@ -1,35 +1,32 @@
 package edu.shapo.exprs.service
 
-import edu.shapo.exprs.dao.AccountDao
-import edu.shapo.exprs.dao.AccountDaoImpl
 import edu.shapo.exprs.exception.MoneyTransferException
+import edu.shapo.exprs.model.Account
 import edu.shapo.exprs.model.Constant
 import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.model.TransferStatus
-import spock.lang.Shared
 import spock.lang.Specification
 
 class TransferServiceSpec extends Specification {
 
     TransferServiceImpl transferService = new TransferServiceImpl()
 
-    @Shared
-    AccountDao accountDao
+    AccountService accountService = Mock(AccountService)
 
-    def setupSpec() {
-        accountDao = new AccountDaoImpl()
-    }
+    TransactionLogService transactionLogService = Mock(TransactionLogService)
 
     def setup() {
-        transferService.accountDao = accountDao
+        transferService.accountService = accountService
+        transferService.transactionLogService = transactionLogService
     }
 
     def "check that exception thrown if incorrect source ID"(){
 
         given:
+        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)), new Account(id: 2, currentAmout: new BigDecimal(100))]
 
         when:
-        TransferStatus result = transferService.makeTransfer(20L, 10L, new BigDecimal(50), "John Doe")
+        TransferStatus result = transferService.makeTransfer(20L, 2L, new BigDecimal(50), "John Doe")
 
         then:
         !result
@@ -42,9 +39,11 @@ class TransferServiceSpec extends Specification {
     def "check that exception thrown if incorrect target ID"(){
 
         given:
+        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)), new Account(id: 2, currentAmout: new BigDecimal(100))]
+
 
         when:
-        TransferStatus result = transferService.makeTransfer(10L, 33L, new BigDecimal(50), "John Doe")
+        TransferStatus result = transferService.makeTransfer(1L, 33L, new BigDecimal(50), "John Doe")
 
         then:
         !result
@@ -56,9 +55,10 @@ class TransferServiceSpec extends Specification {
     def "check that exception thrown if we transfer more money than have"(){
 
         given:
+        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)), new Account(id: 2, currentAmout: new BigDecimal(100))]
 
         when:
-        TransferStatus result = transferService.makeTransfer(10L, 3L, new BigDecimal(5000000), "John Doe")
+        TransferStatus result = transferService.makeTransfer(1L, 2L, new BigDecimal(5000000), "John Doe")
 
         then:
         !result
@@ -70,9 +70,10 @@ class TransferServiceSpec extends Specification {
     def "check for correct flow process"(){
 
         given:
+        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)), new Account(id: 2, currentAmout: new BigDecimal(100))]
 
         when:
-        TransferStatus result = transferService.makeTransfer(10L, 3L, new BigDecimal(50), "John Doe")
+        TransferStatus result = transferService.makeTransfer(1L, 2L, new BigDecimal(50), "John Doe")
 
         then:
         result
