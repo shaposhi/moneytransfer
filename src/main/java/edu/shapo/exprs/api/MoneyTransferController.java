@@ -16,9 +16,9 @@ import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 
-public class MoneyTransferApiHandler {
+public class MoneyTransferController {
 
-    private static final Logger log = LogManager.getLogger(MoneyTransferApiHandler.class);
+    private static final Logger log = LogManager.getLogger(MoneyTransferController.class);
 
     @Inject
     private TransferService transferService;

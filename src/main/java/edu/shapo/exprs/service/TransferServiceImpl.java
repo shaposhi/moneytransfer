@@ -1,7 +1,6 @@
 package edu.shapo.exprs.service;
 
 import com.google.inject.Inject;
-import edu.shapo.exprs.dao.AccountDao;
 import edu.shapo.exprs.exception.MoneyTransferException;
 import edu.shapo.exprs.model.Account;
 import edu.shapo.exprs.model.Constant;
@@ -19,14 +18,17 @@ public class TransferServiceImpl implements TransferService {
     private static final Logger log = LogManager.getLogger(TransferServiceImpl.class);
 
     @Inject
-    private AccountDao accountDao;
+    private AccountService accountService;
+
+    @Inject
+    private TransactionLogService transactionLogService;
 
     @Override
     public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException {
-        log.info("Received transfer request from: " + srcId + " to: " + dstId + " with amount: " + amount + " initiated by: " +initiator);
+        log.debug("Received transfer request from: " + srcId + " to: " + dstId + " with amount: " + amount + " initiated by: " +initiator);
 
 
-        List<Account> accounts = accountDao.getAllAccounts();
+        List<Account> accounts = accountService.findAll();
 
         Optional<Account> srcOpt = accounts.stream().filter(a -> a.getId().equals(srcId)).findFirst();
         Optional<Account> dstOpt = accounts.stream().filter(a -> a.getId().equals(dstId)).findFirst();
@@ -40,25 +42,13 @@ public class TransferServiceImpl implements TransferService {
             throw new MoneyTransferException(ErrorCode.ERROR_003.name());
         }
 
-        processTransferring(srcOpt.get(), dstOpt.get(), amount);
+        processTransferring(srcOpt.get(), dstOpt.get(), amount, initiator);
 
-        //TODO this code should be moved to separate account service
-        /*
-        if (accounts != null) {
-            accounts.forEach(a -> {
-                log.info(a.toString());
-            });
-            BigDecimal sum = accounts.stream()
-                    .map(Account::getCurrentAmout).reduce(BigDecimal.ZERO ,BigDecimal::add);
-            log.info("Total sum: " + sum);
-        }
-        */
 
         return new TransferStatus(Constant.TRANSFER_SUCCESSFUL, "transfer successful", null);
     }
 
-    private void processTransferring(Account srcAcc, Account dstAcc, BigDecimal amount) throws MoneyTransferException {
-        log.info("In separate thread. From " + srcAcc.getId() + " to: " + dstAcc.getId() + " amount: " + amount);
+    private void processTransferring(Account srcAcc, Account dstAcc, BigDecimal amount, String initiator) throws MoneyTransferException {
         Account former, latter;
         if (srcAcc.compareTo(dstAcc) < 0) {
             former = srcAcc;
@@ -77,12 +67,17 @@ public class TransferServiceImpl implements TransferService {
                 srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
                 dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
                 log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
+                transactionLogService.createAndSave(srcAcc.getId(), dstAcc.getId(), amount, initiator);
             }
         }
 
     }
 
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    public void setTransactionLogService(TransactionLogService transactionLogService) {
+        this.transactionLogService = transactionLogService;
     }
 }
