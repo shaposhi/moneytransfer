@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 
 public class TransferServiceImpl implements TransferService {
 
@@ -23,7 +22,7 @@ public class TransferServiceImpl implements TransferService {
     private AccountDao accountDao;
 
     @Override
-    public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException, Exception {
+    public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException {
         log.info("Received transfer request from: " + srcId + " to: " + dstId + " with amount: " + amount + " initiated by: " +initiator);
 
 
@@ -41,19 +40,19 @@ public class TransferServiceImpl implements TransferService {
             throw new MoneyTransferException(ErrorCode.ERROR_003.name());
         }
 
-        //processTransferring(srcOpt.get(), dstOpt.get(), amount);
-        processing(srcOpt.get(), dstOpt.get(), amount);
+        processTransferring(srcOpt.get(), dstOpt.get(), amount);
 
-
+        //TODO this code should be moved to separate account service
+        /*
         if (accounts != null) {
-//            accounts.forEach(a -> {
-//                log.info(a.toString());
-//            });
+            accounts.forEach(a -> {
+                log.info(a.toString());
+            });
             BigDecimal sum = accounts.stream()
                     .map(Account::getCurrentAmout).reduce(BigDecimal.ZERO ,BigDecimal::add);
             log.info("Total sum: " + sum);
         }
-
+        */
 
         return new TransferStatus(Constant.TRANSFER_SUCCESSFUL, "transfer successful", null);
     }
@@ -74,19 +73,12 @@ public class TransferServiceImpl implements TransferService {
                     log.error("Scr account not have enough money : " + amount);
                     throw new MoneyTransferException(ErrorCode.ERROR_004.name());
                 }
+                log.debug("Before: Source " + srcAcc + " dest: " + dstAcc);
                 srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
                 dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
+                log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
             }
         }
-
-    }
-
-    private void processing(Account srcAcc, Account dstAcc, BigDecimal amount) throws Exception {
-        Callable transfer = (Callable<Integer>) () -> {
-            processTransferring(srcAcc, dstAcc, amount);
-            return 0;
-        };
-        transfer.call();
 
     }
 
