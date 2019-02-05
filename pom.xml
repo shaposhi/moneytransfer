@@ -72,7 +72,6 @@
             <version>5.0</version>
         </dependency>
 
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -88,10 +87,6 @@
             <artifactId>jersey-common</artifactId>
             <version>2.22.2</version>
         </dependency>
-
-
-
-
 
         <dependency>
             <groupId>junit</groupId>
@@ -111,7 +106,7 @@
             <version>2.4.16</version>
             <scope>test</scope>
         </dependency>
-        <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+        <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>3.2.4</version>
@@ -134,37 +129,11 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
-                <!--<plugin>-->
-                    <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                    <!--<configuration>-->
-                        <!--<archive>-->
-                            <!--<manifest>-->
-                                <!--<mainClass>edu.shapo.exprs.App</mainClass>-->
-                            <!--</manifest>-->
-                        <!--</archive>-->
-                        <!--<descriptorRefs>-->
-                            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-                        <!--</descriptorRefs>-->
-                    <!--</configuration>-->
-                    <!--<executions>-->
-                        <!--<execution>-->
-                            <!--<id>make-assembly</id>-->
-                            <!--<phase>package</phase>-->
-                            <!--<goals>-->
-                                <!--<goal>single</goal>-->
-                            <!--</goals>-->
-                        <!--</execution>-->
-                    <!--</executions>-->
-                <!--</plugin>-->
-
-
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <configuration>
@@ -188,45 +157,6 @@
                         </execution>
                     </executions>
                 </plugin>
-
-
-
-                <!--&lt;!&ndash; clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle &ndash;&gt;-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-clean-plugin</artifactId>-->
-                    <!--<version>3.1.0</version>-->
-                <!--</plugin>-->
-                <!--&lt;!&ndash; default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging &ndash;&gt;-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-resources-plugin</artifactId>-->
-                    <!--<version>3.0.2</version>-->
-                <!--</plugin>-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                    <!--<version>3.8.0</version>-->
-                <!--</plugin>-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                    <!--<version>2.22.1</version>-->
-                <!--</plugin>-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-install-plugin</artifactId>-->
-                    <!--<version>2.5.2</version>-->
-                <!--</plugin>-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-deploy-plugin</artifactId>-->
-                    <!--<version>2.8.2</version>-->
-                <!--</plugin>-->
-                <!--&lt;!&ndash; site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle &ndash;&gt;-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-site-plugin</artifactId>-->
-                    <!--<version>3.7.1</version>-->
-                <!--</plugin>-->
-                <!--<plugin>-->
-                    <!--<artifactId>maven-project-info-reports-plugin</artifactId>-->
-                    <!--<version>3.0.0</version>-->
-                <!--</plugin>-->
-
             </plugins>
         </pluginManagement>
     </build>
