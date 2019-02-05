@@ -3,6 +3,7 @@ package edu.shapo.exprs.unit.service
 import edu.shapo.exprs.dao.AccountDao
 import edu.shapo.exprs.dao.AccountDaoImpl
 import edu.shapo.exprs.model.Account
+import edu.shapo.exprs.service.AccountServiceImpl
 import spock.lang.Shared
 import spock.lang.Specification
 

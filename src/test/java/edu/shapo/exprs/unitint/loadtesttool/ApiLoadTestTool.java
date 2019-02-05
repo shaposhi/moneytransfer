@@ -1,6 +1,6 @@
 package edu.shapo.exprs.unitint.loadtesttool;
 
-import edu.shapo.exprs.unit.service.TransferServiceImpl;
+import edu.shapo.exprs.service.TransferServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

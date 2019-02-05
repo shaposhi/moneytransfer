@@ -3,6 +3,8 @@ package edu.shapo.exprs.unit.validation
 import com.google.gson.Gson
 import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.to.TransferRequestTO
+import edu.shapo.exprs.validation.RequestSyntaxValidator
+import edu.shapo.exprs.validation.SyntaxValidationResult
 import spark.Request
 import spock.lang.Specification
 

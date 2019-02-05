@@ -2,13 +2,13 @@ package edu.shapo.exprs.configuration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import edu.shapo.exprs.unit.api.AccountController;
-import edu.shapo.exprs.unit.api.StatisticController;
-import edu.shapo.exprs.unit.api.MoneyTransferController;
+import edu.shapo.exprs.api.AccountController;
+import edu.shapo.exprs.api.StatisticController;
+import edu.shapo.exprs.api.MoneyTransferController;
 import edu.shapo.exprs.dao.AccountDao;
 import edu.shapo.exprs.dao.AccountDaoImpl;
-import edu.shapo.exprs.unit.service.*;
-import edu.shapo.exprs.unit.validation.RequestSyntaxValidator;
+import edu.shapo.exprs.service.*;
+import edu.shapo.exprs.validation.RequestSyntaxValidator;
 
 public class AppModule extends AbstractModule {
 
