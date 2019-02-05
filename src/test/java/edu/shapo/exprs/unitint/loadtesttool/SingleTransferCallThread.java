@@ -1,4 +1,4 @@
-package edu.shapo.testtransfer;
+package edu.shapo.exprs.unitint.loadtesttool;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -9,8 +9,8 @@ import java.util.Random;
 
 public class SingleTransferCallThread extends Thread {
 
-    Client client = null;
-    WebResource resource = null;
+    private Client client;
+    private WebResource resource;
 
     public SingleTransferCallThread() {
 

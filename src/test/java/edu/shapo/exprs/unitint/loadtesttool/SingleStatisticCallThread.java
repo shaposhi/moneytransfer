@@ -1,4 +1,4 @@
-package edu.shapo.testtransfer;
+package edu.shapo.exprs.unitint.loadtesttool;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
