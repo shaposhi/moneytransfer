@@ -49,7 +49,15 @@ public class Account implements Comparable<Account> {
 
     @Override
     public int compareTo(Account another) {
-        return (this.id > another.id) ? 1 : (this.id < another.id) ? -1 : 0;
+        if (this.id > another.getId()) {
+            return 1;
+        } else {
+            if (this.id < another.getId()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
     }
 
     @Override

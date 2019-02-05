@@ -2,12 +2,11 @@ package edu.shapo.exprs;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import edu.shapo.exprs.api.AccountController;
-import edu.shapo.exprs.api.StatisticController;
-import edu.shapo.exprs.api.MoneyTransferApi;
-import edu.shapo.exprs.api.MoneyTransferController;
+import edu.shapo.exprs.unit.api.AccountController;
+import edu.shapo.exprs.unit.api.MoneyTransferApi;
+import edu.shapo.exprs.unit.api.MoneyTransferController;
+import edu.shapo.exprs.unit.api.StatisticController;
 import edu.shapo.exprs.configuration.AppModule;
-
 
 
 public class App {
