@@ -66,13 +66,13 @@ public class RequestSyntaxValidator {
             if (requestTO.getTargetAccountId() <= 0L) {
                 results.add(ErrorCode.ERROR_011);
             }
-            if (requestTO.getTransferAmount() == null || (requestTO.getTransferAmount().compareTo(new BigDecimal(0.0)) < 0)) {
+            if (requestTO.getTransferAmount() == null || (requestTO.getTransferAmount().compareTo(BigDecimal.ZERO) < 0)) {
                 results.add(ErrorCode.ERROR_012);
             }
             if (StringUtils.isNullOrEmpty(requestTO.getInitiator())) {
                 results.add(ErrorCode.ERROR_013);
             }
-            if (requestTO.getTransferAmount() != null && requestTO.getTransferAmount().scale() > 2 ) {
+            if (requestTO.getTransferAmount() != null && requestTO.getTransferAmount().scale() > 2) {
                 results.add(ErrorCode.ERROR_014);
             }
             if (requestTO.getSourceAccountId().equals(requestTO.getTargetAccountId())) {

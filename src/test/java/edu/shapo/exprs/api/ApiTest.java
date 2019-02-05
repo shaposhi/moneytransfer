@@ -18,8 +18,9 @@ import org.junit.runners.MethodSorters;
 import spark.servlet.SparkApplication;
 
 import java.math.BigDecimal;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -29,7 +30,6 @@ public class ApiTest {
     public static class TestTransferApiSparkApplication implements SparkApplication {
         @Override
         public void init() {
-
             Injector injector = Guice.createInjector(new AppModule());
 
             MoneyTransferController moneyTransferController = injector.getInstance(MoneyTransferController.class);
@@ -37,7 +37,6 @@ public class ApiTest {
             AccountController accountController = injector.getInstance(AccountController.class);
 
             new MoneyTransferApi(moneyTransferController, statisticController, accountController);
-
         }
     }
 
@@ -47,14 +46,14 @@ public class ApiTest {
     @Test
     public void serverRespondsSuccessfully() throws HttpClientException {
 
-       TransferRequestTO transferRequestTO = new  TransferRequestTO();
+        TransferRequestTO transferRequestTO = new TransferRequestTO();
         transferRequestTO.setSourceAccountId(5L);
         transferRequestTO.setTargetAccountId(7L);
         transferRequestTO.setTransferAmount(new BigDecimal("100"));
         transferRequestTO.setInitiator("John");
         String bodyContent = new Gson().toJson(transferRequestTO);
 
-        PostMethod request = testServer.post("/bank/api/transfer/make", bodyContent,false);
+        PostMethod request = testServer.post("/bank/api/transfer/make", bodyContent, false);
         HttpResponse httpResponse = testServer.execute(request);
         assertEquals(200, httpResponse.code());
 
@@ -68,14 +67,13 @@ public class ApiTest {
     }
 
 
-
     @Test
-    public void serverRespondsSuccessfullyMultiThr() throws HttpClientException, InterruptedException {
-
+    public void serverRespondsSuccessfullyMultiThr() throws HttpClientException, InterruptedException, ExecutionException {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
+        List<Future<Integer>> tasks = new ArrayList<>();
 
-        for (int i = 0; i< 100; i++ ) {
-            Runnable task = () -> {
+        for (int i = 0; i < 100; i++) {
+            Callable<Integer> task = () -> {
                 TransferRequestTO transferTO = new TransferRequestTO();
                 transferTO.setSourceAccountId(5L);
                 transferTO.setTargetAccountId(7L);
@@ -84,20 +82,20 @@ public class ApiTest {
                 String bodyContent = new Gson().toJson(transferTO);
 
                 PostMethod request = testServer.post("/bank/api/transfer/make", bodyContent, false);
-                HttpResponse httpResponse = null;
-                try {
-                    httpResponse = testServer.execute(request);
-                } catch (HttpClientException e) {
-                    e.printStackTrace();
-                }
+                HttpResponse httpResponse = testServer.execute(request);
+
                 assertEquals(200, httpResponse.code());
+                return httpResponse.code();
             };
-            executorService.submit(task);
+            Future<Integer> future = executorService.submit(task);
+            tasks.add(future);
         }
 
         executorService.shutdown();
-        Thread.sleep(2000);
 
+        for (Future<Integer> task : tasks) {
+            task.get();
+        }
 
         GetMethod request2 = testServer.get("/bank/api/account/5", false);
         HttpResponse httpResponse2 = testServer.execute(request2);
@@ -106,10 +104,5 @@ public class ApiTest {
         String accAsString = new String(httpResponse2.body());
         AccountTO resultAcc = new Gson().fromJson(accAsString, AccountTO.class);
         assertEquals(resultAcc.getCurrentAmout(), new BigDecimal("800.00"));
-
-
-
-
     }
-
 }

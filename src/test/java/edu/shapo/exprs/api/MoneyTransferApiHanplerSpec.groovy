@@ -5,6 +5,7 @@ import edu.shapo.exprs.exception.MoneyTransferException
 import edu.shapo.exprs.model.Constant
 import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.model.TransferStatus
+import edu.shapo.exprs.model.TransferStatusCode
 import edu.shapo.exprs.service.TransferService
 import edu.shapo.exprs.to.TransferRequestTO
 import edu.shapo.exprs.to.TransferResponseTO
@@ -16,10 +17,8 @@ import spock.lang.Specification
 
 class MoneyTransferApiHanplerSpec extends Specification {
 
-
     TransferService transferService = Mock(TransferService.class)
     RequestSyntaxValidator validator = Mock(RequestSyntaxValidator.class)
-
     MoneyTransferController handler = new MoneyTransferController()
 
     def setup() {
@@ -27,8 +26,7 @@ class MoneyTransferApiHanplerSpec extends Specification {
         handler.requestSyntaxValidator = validator
     }
 
-    def "check that we handle incorrect request"(){
-
+    def "check that we handle incorrect request"() {
         given:
         Response response = Mock(Response.class)
         Request inputRequst = Mock(Request.class)
@@ -42,20 +40,20 @@ class MoneyTransferApiHanplerSpec extends Specification {
         then:
         result
         result.status == Constant.TRANSFER_FAIL
-        result.message.contains("Error")
-
+        result.message.contains(Constant.ERROR)
     }
 
-    def "check that we handle error during transfer"(){
-
+    def "check that we handle error during transfer"() {
         given:
-        TransferRequestTO transferRequestTO = new  TransferRequestTO(sourceAccountId: 5L, targetAccountId: 7L, transferAmount: new BigDecimal(100), initiator: "John")
+        TransferRequestTO transferRequestTO = new TransferRequestTO(sourceAccountId: 5L, targetAccountId: 7L,
+                transferAmount: new BigDecimal(100), initiator: "John")
         Response response = Mock(Response.class)
         Request inputRequst = Mock(Request.class)
         inputRequst.body() >> new Gson().toJson(transferRequestTO)
         validator.validate(inputRequst) >> new SyntaxValidationResult(isValid: true, requestTO: transferRequestTO)
-        transferService.makeTransfer(5L, 7L, new BigDecimal(100), "John") >> {throw new MoneyTransferException("ERROR_004")}
-
+        transferService.makeTransfer(5L, 7L, new BigDecimal(100), "John") >> {
+            throw new MoneyTransferException("ERROR_004")
+        }
 
         when:
         String res = handler.handleTransferRequest(inputRequst, response)
@@ -65,20 +63,18 @@ class MoneyTransferApiHanplerSpec extends Specification {
         result
         result.status == Constant.TRANSFER_FAIL
         result.message.contains(ErrorCode.ERROR_004.description)
-
     }
 
-    def "check that we handle correct transfer"(){
-
+    def "check that we handle correct transfer"() {
         given:
-        TransferRequestTO transferRequestTO = new  TransferRequestTO(sourceAccountId: 5L, targetAccountId: 7L, transferAmount: new BigDecimal(100), initiator: "John")
+        TransferRequestTO transferRequestTO = new TransferRequestTO(sourceAccountId: 5L, targetAccountId: 7L,
+                transferAmount: new BigDecimal(100), initiator: "John")
         Response response = Mock(Response.class)
         Request inputRequst = Mock(Request.class)
         inputRequst.body() >> new Gson().toJson(transferRequestTO)
         validator.validate(inputRequst) >> new SyntaxValidationResult(isValid: true, requestTO: transferRequestTO)
         transferService.makeTransfer(5L, 7L, new BigDecimal(100), "John") >>
-                new TransferStatus(Constant.TRANSFER_SUCCESSFUL, "transfer successful", null)
-
+                new TransferStatus(TransferStatusCode.SUCCESSFUL, "transfer successful", null)
 
         when:
         String res = handler.handleTransferRequest(inputRequst, response)
@@ -86,9 +82,8 @@ class MoneyTransferApiHanplerSpec extends Specification {
 
         then:
         result
-        result.status == Constant.TRANSFER_SUCCESSFUL
+        result.status == TransferStatusCode.SUCCESSFUL.name()
         result.message.contains("transfer successful")
-
     }
 
 }

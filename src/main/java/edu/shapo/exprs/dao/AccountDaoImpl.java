@@ -23,8 +23,7 @@ public class AccountDaoImpl implements AccountDao {
 
     private Dao<Account, String> accountDao = null;
 
-
-    private List<Account> bankAccounts = Collections.EMPTY_LIST;
+    private List<Account> bankAccounts = Collections.emptyList();
 
     public AccountDaoImpl() {
         initConnection();
@@ -33,7 +32,7 @@ public class AccountDaoImpl implements AccountDao {
 
     private void initConnection() {
         if (accountDao == null) {
-            ConnectionSource connectionSource = null;
+            ConnectionSource connectionSource;
             try {
                 connectionSource = new JdbcConnectionSource(URL_WITH_INIT_SCRIPTS, "sa", "");
                 accountDao = DaoManager.createDao(connectionSource, Account.class);

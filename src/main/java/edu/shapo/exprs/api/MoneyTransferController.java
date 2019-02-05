@@ -11,14 +11,10 @@ import edu.shapo.exprs.to.TransferRequestTO;
 import edu.shapo.exprs.to.TransferResponseTO;
 import edu.shapo.exprs.validation.RequestSyntaxValidator;
 import edu.shapo.exprs.validation.SyntaxValidationResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 
 public class MoneyTransferController {
-
-    private static final Logger log = LogManager.getLogger(MoneyTransferController.class);
 
     @Inject
     private TransferService transferService;
@@ -26,10 +22,9 @@ public class MoneyTransferController {
     @Inject
     private RequestSyntaxValidator requestSyntaxValidator;
 
-
     public String handleTransferRequest(Request request, Response response) {
         response.type("application/json");
-        TransferRequestTO requestTO = null;
+        TransferRequestTO requestTO;
 
         TransferStatus transferStatus;
 
@@ -44,19 +39,15 @@ public class MoneyTransferController {
             transferStatus = transferService.makeTransfer(
                     requestTO.getSourceAccountId(), requestTO.getTargetAccountId(),
                     requestTO.getTransferAmount(), requestTO.getInitiator());
-
-
         } catch (MoneyTransferException mte) {
             ErrorCode errorCode = ErrorCode.valueOf(mte.getMessage());
 
             return new Gson().toJson(new TransferResponseTO(Constant.TRANSFER_FAIL,
-                    "Error: " + errorCode.name() + " " + errorCode.getDescription()));
+                    Constant.ERROR + " " + errorCode.name() + " " + errorCode.getDescription()));
         }
 
-        return new Gson().toJson(new TransferResponseTO(transferStatus.getStatus(), transferStatus.getMessage()));
+        return new Gson().toJson(new TransferResponseTO(transferStatus.getStatus().name(), transferStatus.getMessage()));
     }
-
-
 
     public void setTransferService(TransferService transferService) {
         this.transferService = transferService;

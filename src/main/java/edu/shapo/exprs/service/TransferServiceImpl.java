@@ -3,9 +3,9 @@ package edu.shapo.exprs.service;
 import com.google.inject.Inject;
 import edu.shapo.exprs.exception.MoneyTransferException;
 import edu.shapo.exprs.model.Account;
-import edu.shapo.exprs.model.Constant;
 import edu.shapo.exprs.model.ErrorCode;
 import edu.shapo.exprs.model.TransferStatus;
+import edu.shapo.exprs.model.TransferStatusCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,7 +45,7 @@ public class TransferServiceImpl implements TransferService {
         processTransferring(srcOpt.get(), dstOpt.get(), amount, initiator);
 
 
-        return new TransferStatus(Constant.TRANSFER_SUCCESSFUL, "transfer successful", null);
+        return new TransferStatus(TransferStatusCode.SUCCESSFUL, "transfer successful", null);
     }
 
     private void processTransferring(Account srcAcc, Account dstAcc, BigDecimal amount, String initiator) throws MoneyTransferException {

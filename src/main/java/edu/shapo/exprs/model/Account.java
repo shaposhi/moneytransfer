@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "accounts")
 public class Account implements Comparable<Account> {
@@ -49,5 +50,18 @@ public class Account implements Comparable<Account> {
     @Override
     public int compareTo(Account another) {
         return (this.id > another.id) ? 1 : (this.id < another.id) ? -1 : 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

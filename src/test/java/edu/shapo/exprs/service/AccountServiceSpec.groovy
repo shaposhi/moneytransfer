@@ -21,7 +21,7 @@ class AccountServiceSpec extends Specification {
         accountService.accountDao = accountDao
     }
 
-    def "test getting all account" () {
+    def "test getting all account"() {
         given:
 
         when:

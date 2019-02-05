@@ -1,21 +1,21 @@
 package edu.shapo.exprs.model;
 
 public class TransferStatus {
-    private String status;
+    private TransferStatusCode status;
     private String message;
     private ErrorCode errorCode;
 
-    public TransferStatus(String status, String message, ErrorCode errorCode) {
+    public TransferStatus(TransferStatusCode status, String message, ErrorCode errorCode) {
         setStatus(status);
         setMessage(message);
         setErrorCode(errorCode);
     }
 
-    public String getStatus() {
+    public TransferStatusCode getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TransferStatusCode status) {
         this.status = status;
     }
 
