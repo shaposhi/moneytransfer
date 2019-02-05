@@ -1,8 +1,8 @@
-package edu.shapo.exprs.unit.api;
+package edu.shapo.exprs.api;
 
 import com.google.inject.Inject;
-import edu.shapo.exprs.unit.service.AccountService;
-import edu.shapo.exprs.unit.service.TransactionLogService;
+import edu.shapo.exprs.service.AccountService;
+import edu.shapo.exprs.service.TransactionLogService;
 
 public class StatisticController {
 

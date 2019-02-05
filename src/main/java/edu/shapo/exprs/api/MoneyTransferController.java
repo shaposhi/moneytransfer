@@ -1,4 +1,4 @@
-package edu.shapo.exprs.unit.api;
+package edu.shapo.exprs.api;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -6,11 +6,11 @@ import edu.shapo.exprs.exception.MoneyTransferException;
 import edu.shapo.exprs.model.Constant;
 import edu.shapo.exprs.model.ErrorCode;
 import edu.shapo.exprs.model.TransferStatus;
-import edu.shapo.exprs.unit.service.TransferService;
+import edu.shapo.exprs.service.TransferService;
 import edu.shapo.exprs.to.TransferRequestTO;
 import edu.shapo.exprs.to.TransferResponseTO;
-import edu.shapo.exprs.unit.validation.RequestSyntaxValidator;
-import edu.shapo.exprs.unit.validation.SyntaxValidationResult;
+import edu.shapo.exprs.validation.RequestSyntaxValidator;
+import edu.shapo.exprs.validation.SyntaxValidationResult;
 import spark.Request;
 import spark.Response;
 

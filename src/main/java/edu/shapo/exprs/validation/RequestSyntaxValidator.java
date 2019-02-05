@@ -1,4 +1,4 @@
-package edu.shapo.exprs.unit.validation;
+package edu.shapo.exprs.validation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

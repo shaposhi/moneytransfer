@@ -1,9 +1,9 @@
-package edu.shapo.exprs.unit.api;
+package edu.shapo.exprs.api;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import edu.shapo.exprs.model.Account;
-import edu.shapo.exprs.unit.service.AccountService;
+import edu.shapo.exprs.service.AccountService;
 import edu.shapo.exprs.to.AccountTO;
 import org.h2.util.StringUtils;
 

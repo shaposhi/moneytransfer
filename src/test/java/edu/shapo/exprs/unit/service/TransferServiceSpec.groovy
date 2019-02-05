@@ -5,6 +5,9 @@ import edu.shapo.exprs.model.Account
 import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.model.TransferStatus
 import edu.shapo.exprs.model.TransferStatusCode
+import edu.shapo.exprs.service.AccountService
+import edu.shapo.exprs.service.TransactionLogService
+import edu.shapo.exprs.service.TransferServiceImpl
 import spock.lang.Specification
 
 class TransferServiceSpec extends Specification {

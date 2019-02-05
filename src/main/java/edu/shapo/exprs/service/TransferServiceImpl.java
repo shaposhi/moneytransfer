@@ -1,4 +1,4 @@
-package edu.shapo.exprs.unit.service;
+package edu.shapo.exprs.service;
 
 import com.google.inject.Inject;
 import edu.shapo.exprs.exception.MoneyTransferException;

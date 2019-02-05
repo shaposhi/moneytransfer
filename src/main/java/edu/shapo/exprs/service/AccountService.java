@@ -1,4 +1,4 @@
-package edu.shapo.exprs.unit.service;
+package edu.shapo.exprs.service;
 
 import edu.shapo.exprs.model.Account;
 

@@ -1,4 +1,4 @@
-package edu.shapo.exprs.unit.api;
+package edu.shapo.exprs.api;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
