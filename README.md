@@ -2,10 +2,13 @@
 Money Transfer api between accounts
 
 download from: https://github.com/shaposhi/moneytransfer/blob/master/executable/money-transfer-exec.jar
+
 and start with:
+
 java -jar money-transfer-exec.jar 
 
 Or from Project
+
 edu.shapo.exprs.App - API application, just run main() method
 port 8080
 
