@@ -67,20 +67,24 @@ public class TransferServiceImpl implements TransferService {
             former.lock();
             latter.lock();
 
-            if (amount.compareTo(srcAcc.getCurrentAmout()) > 0) {
-                log.error("Scr account not have enough money : " + amount);
-                throw new MoneyTransferException(ErrorCode.ERROR_004.name());
-            }
-            log.debug("Before: Source " + srcAcc + " dest: " + dstAcc);
-            srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
-            dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
-            log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
-            auditTransactionLogService.createAndSave(srcAcc.getId(), dstAcc.getId(), amount, initiator, srcAcc.getCurrentAmout());
+            doTransfer(srcAcc, dstAcc, amount, initiator);
 
         } finally {
             latter.unlock();
             former.unlock();
         }
+    }
+
+    private void doTransfer(Account srcAcc, Account dstAcc, BigDecimal amount, String initiator) throws MoneyTransferException {
+        if (amount.compareTo(srcAcc.getCurrentAmout()) > 0) {
+            log.error("Scr account not have enough money : " + amount);
+            throw new MoneyTransferException(ErrorCode.ERROR_004.name());
+        }
+        log.debug("Before: Source " + srcAcc + " dest: " + dstAcc);
+        srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
+        dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
+        log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
+        auditTransactionLogService.createAndSave(srcAcc.getId(), dstAcc.getId(), amount, initiator, srcAcc.getCurrentAmout());
     }
 
     private Lock getLockForAccountById(Long accountId) {
