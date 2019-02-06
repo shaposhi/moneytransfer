@@ -1,7 +1,7 @@
 # Money transfer
 *money transfer api between accounts*
 
-##How to start
+## How to start
 - download from [link][1] and start with `java -jar money-transfer-exec.jar `
 
 - start main class in edu.shapo.exprs.App in cloned project
