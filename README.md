@@ -7,7 +7,7 @@
 - start main class in edu.shapo.exprs.App in cloned project
 
 
-##How to use
+## How to use
 At startup application load to memory accounts with ID from 1 to 11, with initial amount of 1000.
 
 API url for get accounts statuses http://localhost:8080/bank/api/stat/allaccstatus
@@ -21,7 +21,7 @@ Method: POST
 body example 
 `{"sourceAccountId": "1","targetAccountId": "3","transferAmount": "100.1","initiator": "john"}`
 
-##How to test
+## How to test
 In clonned project you can find class
 `edu.shapo.exprs.unitint.loadtesttool.ApiLoadTestTool`
 This is small application that run 1000 calls from fixed pool of 10 Theads, randomly generating values for src, dst accounts and transfer value.
