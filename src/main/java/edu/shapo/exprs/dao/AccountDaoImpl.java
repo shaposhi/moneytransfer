@@ -7,15 +7,13 @@ import com.j256.ormlite.support.ConnectionSource;
 import edu.shapo.exprs.model.Account;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import spark.utils.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class AccountDaoImpl implements AccountDao {
 
@@ -23,14 +21,30 @@ public class AccountDaoImpl implements AccountDao {
 
     private Properties appProps;
 
-    private Dao<Account, String> accountDao = null;
+    private Dao<Account, String> dao = null;
 
-    private List<Account> bankAccounts = Collections.emptyList();
+    private Map<Long, Account> bankAccounts = new ConcurrentHashMap<>();
 
     public AccountDaoImpl() {
         loadProperties();
         initConnection();
         loadAccounts();
+    }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        if (bankAccounts.isEmpty()) {
+            loadAccounts();
+        }
+        return new ArrayList<>(bankAccounts.values());
+    }
+
+    @Override
+    public Optional<Account> findById(Long id) {
+        if (bankAccounts.isEmpty()) {
+            loadAccounts();
+        }
+        return Optional.ofNullable(bankAccounts.get(id));
     }
 
     private void loadProperties() {
@@ -43,13 +57,13 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     private void initConnection() {
-        if (accountDao == null) {
+        if (dao == null) {
             ConnectionSource connectionSource;
             try {
                 connectionSource = new JdbcConnectionSource(appProps.getProperty("db.url"),
                         appProps.getProperty("db.username"),
                         appProps.getProperty("db.password"));
-                accountDao = DaoManager.createDao(connectionSource, Account.class);
+                dao = DaoManager.createDao(connectionSource, Account.class);
             } catch (SQLException e) {
                 log.error("Error during init connection to DB", e);
             }
@@ -58,35 +72,20 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     private void loadAccounts(){
-        if (CollectionUtils.isEmpty(bankAccounts)) {
+        if (bankAccounts.isEmpty()) {
             try {
-                bankAccounts = new CopyOnWriteArrayList<>(accountDao.queryForAll());
+                bankAccounts.putAll(
+                        dao.queryForAll().stream().collect(Collectors.toMap(Account::getId, Function.identity()))
+                );
             } catch (SQLException e) {
                 log.error("Error loading accounts", e);
             }
         }
     }
 
-    @Override
-    public List<Account> getAllAccounts() {
-        if (CollectionUtils.isEmpty(bankAccounts)) {
-            loadAccounts();
-        }
-        return bankAccounts;
-    }
-
-    @Override
-    public Account findById(Long id) {
-        if (CollectionUtils.isEmpty(bankAccounts)) {
-            loadAccounts();
-        }
-        Optional<Account> optionalAccount = bankAccounts.stream().filter(a -> a.getId().equals(id)).findFirst();
-        return optionalAccount.orElse(null);
-    }
-
     public void closeConnection(){
         try {
-            accountDao.getConnectionSource().close();
+            dao.getConnectionSource().close();
         } catch (IOException e) {
             log.error("Error closing connection", e);
         }

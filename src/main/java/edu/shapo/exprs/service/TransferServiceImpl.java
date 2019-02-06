@@ -10,9 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,21 +31,19 @@ public class TransferServiceImpl implements TransferService {
     public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException {
         log.debug("Received transfer request from: " + srcId + " to: " + dstId + " with amount: " + amount + " initiated by: " +initiator);
 
-        List<Account> accounts = accountService.findAll();
+        Account src = accountService.findById(srcId);
+        Account dst = accountService.findById(dstId);
 
-        Optional<Account> srcOpt = accounts.stream().filter(a -> a.getId().equals(srcId)).findFirst();
-        Optional<Account> dstOpt = accounts.stream().filter(a -> a.getId().equals(dstId)).findFirst();
-
-        if (!srcOpt.isPresent()) {
+        if (src == null) {
             log.error("Scr account not present for : " + srcId);
             throw new MoneyTransferException(ErrorCode.ERROR_002.name());
         }
-        if (!dstOpt.isPresent()) {
-            log.error("Dst account not present for : " + srcId);
+        if (dst == null) {
+            log.error("Dst account not present for : " + dstId);
             throw new MoneyTransferException(ErrorCode.ERROR_003.name());
         }
 
-        processTransferring(srcOpt.get(), dstOpt.get(), amount, initiator);
+        processTransferring(src, dst, amount, initiator);
 
         return new TransferStatus(TransferStatusCode.SUCCESSFUL, "transfer successful", null);
     }

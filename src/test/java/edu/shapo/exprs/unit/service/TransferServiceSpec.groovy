@@ -25,8 +25,8 @@ class TransferServiceSpec extends Specification {
 
     def "check that exception thrown if incorrect source ID"() {
         given:
-        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)),
-                                     new Account(id: 2, currentAmout: new BigDecimal(100))]
+        accountService.findById(2L) >> new Account(id: 2, currentAmout: new BigDecimal(100))
+        accountService.findById(20L) >> null
 
         when:
         TransferStatus result = transferService.makeTransfer(20L, 2L, new BigDecimal(50), "John Doe")
@@ -39,8 +39,8 @@ class TransferServiceSpec extends Specification {
 
     def "check that exception thrown if incorrect target ID"() {
         given:
-        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)),
-                                     new Account(id: 2, currentAmout: new BigDecimal(100))]
+        accountService.findById(1L) >> new Account(id: 1, currentAmout: new BigDecimal(100))
+        accountService.findById(33L) >> null
 
         when:
         TransferStatus result = transferService.makeTransfer(1L, 33L, new BigDecimal(50), "John Doe")
@@ -53,8 +53,8 @@ class TransferServiceSpec extends Specification {
 
     def "check that exception thrown if we transfer more money than have"() {
         given:
-        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)),
-                                     new Account(id: 2, currentAmout: new BigDecimal(100))]
+        accountService.findById(1L) >> new Account(id: 1, currentAmout: new BigDecimal(100))
+        accountService.findById(2L) >> new Account(id: 2, currentAmout: new BigDecimal(100))
 
         when:
         TransferStatus result = transferService.makeTransfer(1L, 2L, new BigDecimal(5000000), "John Doe")
@@ -67,8 +67,8 @@ class TransferServiceSpec extends Specification {
 
     def "check for correct flow process"() {
         given:
-        accountService.findAll() >> [new Account(id: 1, currentAmout: new BigDecimal(100)),
-                                     new Account(id: 2, currentAmout: new BigDecimal(100))]
+        accountService.findById(1L) >> new Account(id: 1, currentAmout: new BigDecimal(100))
+        accountService.findById(2L) >> new Account(id: 2, currentAmout: new BigDecimal(100))
 
         when:
         TransferStatus result = transferService.makeTransfer(1L, 2L, new BigDecimal(50), "John Doe")

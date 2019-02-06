@@ -42,22 +42,22 @@ class AccountServiceSpec extends Specification {
         given:
 
         when:
-        Account result = accountDao.findById(3L)
+        Optional<Account> result = accountDao.findById(3L)
 
         then:
-        result
-        result.id == 3
-        result.currentAmout >= 0
+        result.isPresent()
+        result.get().id == 3
+        result.get().currentAmout >= 0
     }
 
     def "test that we get null if acccount not exist"() {
         given:
 
         when:
-        Account result = accountDao.findById(33L)
+        Optional<Account>  result = accountDao.findById(33L)
 
         then:
-        !result
+        !result.isPresent()
     }
 
 }

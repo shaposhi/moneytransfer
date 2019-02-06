@@ -7,6 +7,7 @@ import spark.utils.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 public class AccountServiceImpl implements AccountService {
@@ -21,7 +22,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findById(Long id) {
-        return accountDao.findById(id);
+        Optional<Account> optional = accountDao.findById(id);
+        return optional.orElse(null);
     }
 
     @Override
