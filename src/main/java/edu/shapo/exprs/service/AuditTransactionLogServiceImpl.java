@@ -10,16 +10,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class TransactionLogServiceImpl implements TransactionLogService {
+public class AuditTransactionLogServiceImpl implements AuditTransactionLogService {
 
     private static Queue<TransactionLog> transactionLogs = new ConcurrentLinkedQueue<>();
 
     private static AtomicLong indexSequence = new AtomicLong(1L);
 
     @Override
-    public TransactionLog createAndSave(Long src, Long dst, BigDecimal amount, String initiator) {
+    public TransactionLog createAndSave(Long src, Long dst, BigDecimal amount, String initiator, BigDecimal srcAmountAfter) {
         Long id = indexSequence.getAndIncrement();
-        TransactionLog log = new TransactionLog(id, src, dst, amount, initiator);
+        TransactionLog log = new TransactionLog(id, src, dst, amount, initiator, srcAmountAfter);
         transactionLogs.add(log);
         return log;
     }

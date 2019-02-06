@@ -38,7 +38,6 @@ class AccountServiceSpec extends Specification {
         result.size() == 11
     }
 
-    //@Ignore
     def "test that we can get acount by Id"() {
         given:
 

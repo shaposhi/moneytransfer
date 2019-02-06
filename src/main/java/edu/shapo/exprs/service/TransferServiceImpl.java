@@ -11,17 +11,23 @@ import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TransferServiceImpl implements TransferService {
 
     private static final Logger log = LogManager.getLogger(TransferServiceImpl.class);
 
+    private static final Map<Long, Lock> lockMap = new ConcurrentHashMap<>();
+
     @Inject
     private AccountService accountService;
 
     @Inject
-    private TransactionLogService transactionLogService;
+    private AuditTransactionLogService auditTransactionLogService;
 
     @Override
     public TransferStatus makeTransfer(Long srcId, Long dstId, BigDecimal amount, String initiator) throws MoneyTransferException {
@@ -47,36 +53,46 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private void processTransferring(Account srcAcc, Account dstAcc, BigDecimal amount, String initiator) throws MoneyTransferException {
-        Account former;
-        Account latter;
+        Lock former;
+        Lock latter;
         if (srcAcc.compareTo(dstAcc) < 0) {
-            former = srcAcc;
-            latter = dstAcc;
+            former = getLockForAccountById(srcAcc.getId());
+            latter = getLockForAccountById(dstAcc.getId());
         } else {
-            former = dstAcc;
-            latter = srcAcc;
-        }
-        synchronized (former) {
-            synchronized (latter) {
-                if (amount.compareTo(srcAcc.getCurrentAmout()) > 0) {
-                    log.error("Scr account not have enough money : " + amount);
-                    throw new MoneyTransferException(ErrorCode.ERROR_004.name());
-                }
-                log.debug("Before: Source " + srcAcc + " dest: " + dstAcc);
-                srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
-                dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
-                log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
-                transactionLogService.createAndSave(srcAcc.getId(), dstAcc.getId(), amount, initiator);
-            }
+            former = getLockForAccountById(dstAcc.getId());
+            latter = getLockForAccountById(srcAcc.getId());
         }
 
+        try {
+            former.lock();
+            latter.lock();
+
+            if (amount.compareTo(srcAcc.getCurrentAmout()) > 0) {
+                log.error("Scr account not have enough money : " + amount);
+                throw new MoneyTransferException(ErrorCode.ERROR_004.name());
+            }
+            log.debug("Before: Source " + srcAcc + " dest: " + dstAcc);
+            srcAcc.setCurrentAmout(srcAcc.getCurrentAmout().subtract(amount));
+            dstAcc.setCurrentAmout(dstAcc.getCurrentAmout().add(amount));
+            log.debug("After: Source " + srcAcc + " dest: " + dstAcc);
+            auditTransactionLogService.createAndSave(srcAcc.getId(), dstAcc.getId(), amount, initiator, srcAcc.getCurrentAmout());
+
+        } finally {
+            latter.unlock();
+            former.unlock();
+        }
     }
+
+    private Lock getLockForAccountById(Long accountId) {
+        return lockMap.computeIfAbsent(accountId, k -> new ReentrantLock(true));
+    }
+
 
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    public void setTransactionLogService(TransactionLogService transactionLogService) {
-        this.transactionLogService = transactionLogService;
+    public void setAuditTransactionLogService(AuditTransactionLogService auditTransactionLogService) {
+        this.auditTransactionLogService = auditTransactionLogService;
     }
 }

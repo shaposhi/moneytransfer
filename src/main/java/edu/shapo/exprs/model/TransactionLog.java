@@ -10,14 +10,16 @@ public final class TransactionLog {
     private final BigDecimal amount;
     private final String initiator;
     private final Date createdDate;
+    private final BigDecimal srcAmountAfter;
 
-    public TransactionLog(Long id, Long src, Long dst, BigDecimal amount, String initiator) {
+    public TransactionLog(Long id, Long src, Long dst, BigDecimal amount, String initiator, BigDecimal srcAmountAfter) {
         this.id = id;
         this.src = src;
         this.dst = dst;
         this.amount = amount;
         this.initiator = initiator;
         this.createdDate = new Date();
+        this.srcAmountAfter = srcAmountAfter;
     }
 
 
@@ -44,4 +46,6 @@ public final class TransactionLog {
     public Date getCreatedDate() {
         return createdDate;
     }
+
+
 }

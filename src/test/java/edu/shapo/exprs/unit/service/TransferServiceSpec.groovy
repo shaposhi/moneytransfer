@@ -6,7 +6,7 @@ import edu.shapo.exprs.model.ErrorCode
 import edu.shapo.exprs.model.TransferStatus
 import edu.shapo.exprs.model.TransferStatusCode
 import edu.shapo.exprs.service.AccountService
-import edu.shapo.exprs.service.TransactionLogService
+import edu.shapo.exprs.service.AuditTransactionLogService
 import edu.shapo.exprs.service.TransferServiceImpl
 import spock.lang.Specification
 
@@ -16,11 +16,11 @@ class TransferServiceSpec extends Specification {
 
     AccountService accountService = Mock(AccountService)
 
-    TransactionLogService transactionLogService = Mock(TransactionLogService)
+    AuditTransactionLogService transactionLogService = Mock(AuditTransactionLogService)
 
     def setup() {
         transferService.accountService = accountService
-        transferService.transactionLogService = transactionLogService
+        transferService.auditTransactionLogService = transactionLogService
     }
 
     def "check that exception thrown if incorrect source ID"() {

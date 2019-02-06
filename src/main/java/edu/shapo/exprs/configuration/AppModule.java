@@ -17,7 +17,7 @@ public class AppModule extends AbstractModule {
         bind(TransferService.class).to(TransferServiceImpl.class).in(Singleton.class);
         bind(AccountDao.class).to(AccountDaoImpl.class).in(Singleton.class);
         bind(AccountService.class).to(AccountServiceImpl.class).in(Singleton.class);
-        bind(TransactionLogService.class).to(TransactionLogServiceImpl.class).in(Singleton.class);
+        bind(AuditTransactionLogService.class).to(AuditTransactionLogServiceImpl.class).in(Singleton.class);
         bind(MoneyTransferController.class).in(Singleton.class);
         bind(AccountController.class).in(Singleton.class);
         bind(StatisticController.class).in(Singleton.class);
